@@ -83,8 +83,8 @@ To get a local copy up and running follow these simple Installation steps.
 
 ## Project Structure
 
-- `/dragons1` the root folder
-- `/dragons1/src` project source file
+- `/dragon-main/` the root folder
+- `/dragon-main/src` project source file
 
 <p align="right">(<a href="#top">back to top</a>)</p>
 
