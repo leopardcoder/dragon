@@ -7,6 +7,7 @@ if (result.error) {
 }
 
 const url = process.env.url
+const startEndpoint = process.env.startgame
 let gameId
 
 function postRequest(path, callback) {
@@ -61,16 +62,19 @@ function startGame(path) {
 }
 function getAds(data) {
     gameId = data.gameId
+    const adsEndpoint = `/api/v2/${gameId}/messages`
 
-    getRequest(`/api/v2/${gameId}/messages`, solve)
+    getRequest(adsEndpoint, solve)
 }
 function solve(data) {
     const firstAd = data[0].adId
-    postRequest(`/api/v2/${gameId}/solve/${firstAd}`, checkGameStatus)
+    const solveEndpoint = `/api/v2/${gameId}/solve/${firstAd}`
+    postRequest(solveEndpoint, checkGameStatus)
 
 }
 function buyItem(item = 'hpot') {
-    postRequest(`/api/v2/${gameId}/shop/buy/${item}`, checkGameStatus)
+    const buyEndpoint = `/api/v2/${gameId}/shop/buy/${item}`
+    postRequest(buyEndpoint, checkGameStatus)
 }
 function checkGameStatus(data) {
     const lives = data.lives
@@ -80,12 +84,14 @@ function checkGameStatus(data) {
 
     const winningScore = 1000
 
+    const adsEndpoint = `/api/v2/${gameId}/messages`
+
     if (score >= winningScore) {
         console.log(`Congratulations! Game finished successfully with a score of ${score}`)
         return
     }
 
-    if ((data.success || !data.success) && shoppingSuccess === undefined) {
+    if (shoppingSuccess === undefined) {
         console.log(`${data.message} Now you have ${gold} gold and ${lives} lives left. Your score is ${score}.`)
     }
 
@@ -93,9 +99,8 @@ function checkGameStatus(data) {
         console.log(`Your shopping was successful. NOw you have ${lives} lives and ${gold} gold.`)
     }
 
-
     if (lives >= 2) {
-        getRequest(`/api/v2/${gameId}/messages`, solve)
+        getRequest(adsEndpoint, solve)
     } else if (lives < 2 && gold >= 50) {
         console.log('You have 1 live left. Buying some healing for you...')
         buyItem()
@@ -105,4 +110,4 @@ function checkGameStatus(data) {
     }
 }
 
-startGame('/api/v2/game/start')
+startGame(startEndpoint)
